@@ -15,4 +15,16 @@ class Profile extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function profileImage()
+    {
+        $imagePath = ($this->image) ? $this->image : 'profile/GWB7pKdYcY42NGYuzqVK7JMagd4tW7fATStBWqh0.png';
+
+        return '/storage/' . $imagePath;
+    }
 }

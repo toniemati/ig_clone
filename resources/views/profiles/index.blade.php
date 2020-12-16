@@ -4,11 +4,15 @@
 <div class="container">
     <div class="row">
         <div class="col-3 p-5">
-            <img src="https://s3.amazonaws.com/freecodecamp/curriculum-diagram-full.jpg" width="150" class="rounded-circle" alt="avatar">
+            <img src="{{ $user->profile->profileImage() }}" class="rounded-circle w-100" alt="avatar">
         </div>
         <div class="col-9 pt-5">
             <div class="d-flex justify-content-between align-items-baseline">
-                <h1>{{ $user->username }}</h1>
+                <div class="d-flex align-items-center pb-3">
+                    <div class="h3">{{ $user->username }}</div>
+
+                    <follow-button user-id="{{ $user->id }}" follows="{{ $follows }}"></follow-button>
+                </div>
 
                 @can('update', $user->profile)
                     <a href="/p/create">Add new post</a>
@@ -22,8 +26,8 @@
 
             <div class="d-flex">
                 <div class="pr-5"><strong>{{ count($user->posts) }}</strong> posts</div>
-                <div class="pr-5"><strong>23k</strong> followers</div>
-                <div class="pr-5"><strong>212</strong> following</div>
+                <div class="pr-5"><strong>{{ count($user->profile->followers) }}</strong> followers</div>
+                <div class="pr-5"><strong>{{ count($user->following) }}</strong> following</div>
             </div>
             <div class="pt-4 font-weight-bold">{{ $user->profile->title }}</div>
             <div>
