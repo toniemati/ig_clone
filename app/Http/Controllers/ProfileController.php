@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class ProfileController extends Controller
@@ -49,9 +50,33 @@ class ProfileController extends Controller
     {
         $user = User::findOrFail($id);
 
+        $postCount = Cache::remember(
+            'count.posts.' . $user->id,
+            now()->addSecond(30),
+            function () use ($user) {
+                return count($user->posts);
+            }
+        );
+
+        $followerCount = Cache::remember(
+            'count.followers.' . $user->id,
+            now()->addSecond(30),
+            function () use ($user) {
+                return count($user->profile->followers);
+            }
+        );
+
+        $followingCount = Cache::remember(
+            'count.following.' . $user->id,
+            now()->addSecond(30),
+            function () use ($user) {
+                return count($user->following);
+            }
+        );
+
         $follows = (auth()->user()) ? auth()->user()->following->contains($user->id) : false;
 
-        return view('profiles.index', compact('user', 'follows'));
+        return view('profiles.index', compact('user', 'follows', 'postCount', 'followerCount', 'followingCount'));
     }
 
     /**
